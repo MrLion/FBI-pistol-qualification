@@ -1,0 +1,1089 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+<title>FBI Pistol Qualification</title>
+<style>
+  :root {
+    --primary: #1e3a5f;
+    --primary-light: #2c5282;
+    --accent: #3b82f6;
+    --accent-hover: #2563eb;
+    --bg: #f0f4f8;
+    --card: #ffffff;
+    --text: #1a202c;
+    --text-secondary: #4a5568;
+    --border: #e2e8f0;
+    --success: #38a169;
+    --fail: #e53e3e;
+    --gold: #d69e2e;
+    --shadow: 0 2px 8px rgba(0,0,0,0.08);
+    --shadow-lg: 0 4px 16px rgba(0,0,0,0.12);
+    --radius: 12px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100dvh;
+    overflow-x: hidden;
+  }
+
+  .screen {
+    display: none;
+    padding: 16px;
+    max-width: 600px;
+    margin: 0 auto;
+    animation: fadeIn 0.3s ease;
+  }
+  .screen.active { display: block; }
+
+  @keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Header */
+  .app-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    text-align: center;
+    padding: 24px 16px;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    box-shadow: var(--shadow-lg);
+  }
+  .app-header h1 {
+    font-size: 1.3rem;
+    font-weight: 700;
+    letter-spacing: 0.5px;
+  }
+  .app-header .subtitle {
+    font-size: 0.8rem;
+    opacity: 0.8;
+    margin-top: 4px;
+  }
+  .header-badge {
+    font-size: 2rem;
+    display: block;
+    margin-bottom: 8px;
+  }
+  .header-nav {
+    display: flex;
+    gap: 8px;
+    justify-content: center;
+    margin-top: 12px;
+  }
+  .header-nav button {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: white;
+    padding: 6px 16px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .header-nav button:hover, .header-nav button.active {
+    background: rgba(255,255,255,0.3);
+  }
+
+  /* Cards */
+  .card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 16px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+  }
+  .card h2 {
+    font-size: 1.1rem;
+    margin-bottom: 12px;
+    color: var(--primary);
+  }
+  .card h3 {
+    font-size: 0.95rem;
+    margin-bottom: 8px;
+    color: var(--primary-light);
+  }
+
+  /* Buttons */
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .btn-primary {
+    background: var(--accent);
+    color: white;
+    width: 100%;
+  }
+  .btn-primary:hover { background: var(--accent-hover); }
+  .btn-primary:disabled {
+    background: #a0aec0;
+    cursor: not-allowed;
+  }
+  .btn-secondary {
+    background: var(--bg);
+    color: var(--text);
+    border: 1px solid var(--border);
+  }
+  .btn-secondary:hover { background: #e2e8f0; }
+  .btn-danger {
+    background: var(--fail);
+    color: white;
+  }
+  .btn-danger:hover { background: #c53030; }
+  .btn-sm {
+    padding: 8px 16px;
+    font-size: 0.85rem;
+  }
+  .btn-gold {
+    background: linear-gradient(135deg, #d69e2e, #ecc94b);
+    color: #744210;
+  }
+
+  /* Form */
+  input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 10px 14px;
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    font-size: 1rem;
+    background: var(--bg);
+    color: var(--text);
+    transition: border-color 0.2s;
+  }
+  input:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px rgba(59,130,246,0.15);
+  }
+
+  /* Shooter inputs */
+  .shooter-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+  .shooter-row input {
+    flex: 1;
+  }
+  .shooter-num {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: var(--accent);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.8rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+  .remove-shooter {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fed7d7;
+    color: var(--fail);
+    border: none;
+    font-size: 1.1rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  /* Stage toggles */
+  .stage-toggle {
+    display: flex;
+    align-items: center;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: var(--bg);
+    cursor: pointer;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+    user-select: none;
+  }
+  .stage-toggle:hover { background: #e2e8f0; }
+  .stage-toggle.disabled { opacity: 0.5; }
+  .stage-toggle input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-right: 12px;
+    accent-color: var(--accent);
+    flex-shrink: 0;
+  }
+  .stage-toggle-info {
+    flex: 1;
+  }
+  .stage-toggle-info .stage-name {
+    font-weight: 600;
+    font-size: 0.9rem;
+  }
+  .stage-toggle-info .stage-detail {
+    font-size: 0.78rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .stage-rounds-badge {
+    background: var(--accent);
+    color: white;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    flex-shrink: 0;
+    margin-left: 8px;
+  }
+
+  /* Scoring */
+  .scoring-stage-header {
+    background: linear-gradient(135deg, var(--primary), var(--primary-light));
+    color: white;
+    padding: 16px;
+    border-radius: var(--radius);
+    margin-bottom: 16px;
+    text-align: center;
+  }
+  .scoring-stage-header .distance {
+    font-size: 2rem;
+    font-weight: 800;
+  }
+  .scoring-stage-header .stage-label {
+    font-size: 0.85rem;
+    opacity: 0.85;
+  }
+
+  .string-card {
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+  }
+  .string-desc {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    margin-bottom: 12px;
+  }
+  .string-time {
+    display: inline-block;
+    background: #ebf8ff;
+    color: var(--primary-light);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  .hits-input {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+  }
+  .hits-input button {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    border: 2px solid var(--border);
+    background: var(--card);
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    color: var(--text);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.15s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .hits-input button:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .hits-input button:active {
+    transform: scale(0.92);
+  }
+  .hits-value {
+    font-size: 2rem;
+    font-weight: 800;
+    min-width: 50px;
+    text-align: center;
+    color: var(--primary);
+  }
+  .hits-max {
+    font-size: 0.8rem;
+    color: var(--text-secondary);
+    text-align: center;
+    margin-top: 4px;
+  }
+
+  .shooter-tab-bar {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 16px;
+    overflow-x: auto;
+    padding-bottom: 4px;
+    -webkit-overflow-scrolling: touch;
+  }
+  .shooter-tab {
+    padding: 8px 16px;
+    border-radius: 20px;
+    border: 2px solid var(--border);
+    background: var(--card);
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: all 0.2s;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .shooter-tab.active {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+  }
+  .shooter-tab .tab-score {
+    font-size: 0.75rem;
+    opacity: 0.8;
+  }
+
+  /* Progress */
+  .progress-bar {
+    width: 100%;
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    margin-bottom: 16px;
+    overflow: hidden;
+  }
+  .progress-fill {
+    height: 100%;
+    background: var(--accent);
+    border-radius: 3px;
+    transition: width 0.3s ease;
+  }
+
+  /* Results */
+  .result-card {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 20px;
+    margin-bottom: 12px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    text-align: center;
+  }
+  .result-card.pass { border-left: 4px solid var(--success); }
+  .result-card.fail { border-left: 4px solid var(--fail); }
+  .result-card.instructor { border-left: 4px solid var(--gold); }
+  .result-name {
+    font-size: 1.1rem;
+    font-weight: 700;
+  }
+  .result-score {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 8px 0;
+  }
+  .result-score.pass-color { color: var(--success); }
+  .result-score.fail-color { color: var(--fail); }
+  .result-score.instructor-color { color: var(--gold); }
+  .result-badge {
+    display: inline-block;
+    padding: 4px 14px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+  }
+  .badge-pass { background: #c6f6d5; color: #276749; }
+  .badge-fail { background: #fed7d7; color: #9b2c2c; }
+  .badge-instructor { background: #fefcbf; color: #744210; }
+  .result-breakdown {
+    margin-top: 12px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+  }
+  .result-breakdown table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 8px;
+  }
+  .result-breakdown th, .result-breakdown td {
+    padding: 4px 8px;
+    text-align: center;
+    border-bottom: 1px solid var(--border);
+    font-size: 0.8rem;
+  }
+  .result-breakdown th {
+    font-weight: 600;
+    color: var(--primary);
+  }
+
+  /* Hall of Fame */
+  .hof-entry {
+    background: var(--card);
+    border-radius: var(--radius);
+    padding: 16px;
+    margin-bottom: 10px;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+  .hof-rank {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--accent);
+    min-width: 36px;
+    text-align: center;
+  }
+  .hof-rank.gold { color: #d69e2e; }
+  .hof-rank.silver { color: #a0aec0; }
+  .hof-rank.bronze { color: #c05621; }
+  .hof-info { flex: 1; }
+  .hof-name { font-weight: 700; font-size: 0.95rem; }
+  .hof-date { font-size: 0.75rem; color: var(--text-secondary); }
+  .hof-score {
+    font-size: 1.3rem;
+    font-weight: 800;
+  }
+  .hof-score.pass-color { color: var(--success); }
+  .hof-score.fail-color { color: var(--fail); }
+  .hof-score.instructor-color { color: var(--gold); }
+  .hof-badge-small {
+    font-size: 0.65rem;
+    padding: 2px 6px;
+    border-radius: 10px;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .hof-details {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    margin-top: 2px;
+  }
+  .hof-empty {
+    text-align: center;
+    padding: 40px 20px;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+  }
+
+  /* Navigation row */
+  .nav-row {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+  }
+  .nav-row .btn { flex: 1; }
+
+  /* Stage nav buttons */
+  .stage-nav {
+    display: flex;
+    gap: 8px;
+    margin-top: 16px;
+  }
+  .stage-nav .btn { flex: 1; }
+
+  /* Helpers */
+  .text-center { text-align: center; }
+  .mt-8 { margin-top: 8px; }
+  .mt-16 { margin-top: 16px; }
+  .mb-8 { margin-bottom: 8px; }
+  .mb-16 { margin-bottom: 16px; }
+  .text-sm { font-size: 0.85rem; }
+  .text-muted { color: var(--text-secondary); }
+
+  /* Landscape adjustments */
+  @media (orientation: landscape) and (max-height: 500px) {
+    .app-header { padding: 12px 16px; }
+    .app-header h1 { font-size: 1.1rem; }
+    .header-badge { font-size: 1.5rem; margin-bottom: 4px; }
+    .screen { padding: 12px; }
+    .scoring-stage-header .distance { font-size: 1.5rem; }
+  }
+
+  /* Larger screens */
+  @media (min-width: 768px) {
+    .screen { padding: 24px; }
+    .card { padding: 24px; }
+    .app-header { padding: 32px 16px; }
+    .app-header h1 { font-size: 1.6rem; }
+  }
+
+  /* Delete button for HoF entries */
+  .hof-delete {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background: #fed7d7;
+    color: var(--fail);
+    border: none;
+    font-size: 0.9rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    transition: background 0.2s;
+  }
+  .hof-delete:hover { background: #feb2b2; }
+
+  /* Select / Deselect all */
+  .toggle-all-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 12px;
+  }
+  .toggle-all-row button {
+    flex: 1;
+    padding: 6px;
+    font-size: 0.8rem;
+  }
+
+  /* Total rounds indicator */
+  .total-rounds {
+    text-align: center;
+    margin-top: 8px;
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+  }
+  .total-rounds strong {
+    color: var(--primary);
+  }
+
+  /* Running total in scoring */
+  .running-total {
+    text-align: center;
+    padding: 10px;
+    background: var(--bg);
+    border-radius: 8px;
+    margin-bottom: 12px;
+    font-size: 0.9rem;
+  }
+  .running-total strong {
+    font-size: 1.2rem;
+    color: var(--primary);
+  }
+</style>
+</head>
+<body>
+
+<header class="app-header">
+  <span class="header-badge">&#9733;</span>
+  <h1>FBI PISTOL QUALIFICATION</h1>
+  <div class="subtitle">2019 Revision &bull; Course of Fire</div>
+  <nav class="header-nav" id="headerNav">
+    <button onclick="showScreen('home')" class="active" data-screen="home">Home</button>
+    <button onclick="showScreen('hallOfFame')" data-screen="hallOfFame">Hall of Fame</button>
+  </nav>
+</header>
+
+<!-- HOME -->
+<section id="screen-home" class="screen active">
+  <div class="card text-center">
+    <h2>Welcome, Shooter</h2>
+    <p class="text-sm text-muted mb-16">50 rounds &bull; 100 points max &bull; QIT-99 Target</p>
+    <button class="btn btn-primary" onclick="showScreen('setup')">Start Qualification</button>
+    <button class="btn btn-secondary mt-8" style="width:100%" onclick="showScreen('hallOfFame')">View Hall of Fame</button>
+  </div>
+  <div class="card">
+    <h3>Scoring</h3>
+    <p class="text-sm text-muted">Each hit inside the QIT silhouette = <strong>2 points</strong></p>
+    <table style="width:100%; margin-top:10px; font-size:0.82rem; border-collapse:collapse;">
+      <tr><td style="padding:4px 0;">80+ / 100</td><td style="padding:4px 0;"><span class="result-badge badge-pass">PASS</span></td></tr>
+      <tr><td style="padding:4px 0;">90+ / 100</td><td style="padding:4px 0;"><span class="result-badge badge-instructor">Instructor</span></td></tr>
+      <tr><td style="padding:4px 0;">Below 80</td><td style="padding:4px 0;"><span class="result-badge badge-fail">FAIL</span></td></tr>
+    </table>
+  </div>
+</section>
+
+<!-- SETUP -->
+<section id="screen-setup" class="screen">
+  <div class="card">
+    <h2>Shooters</h2>
+    <div id="shooterInputs"></div>
+    <button class="btn btn-secondary btn-sm mt-8" id="addShooterBtn" onclick="addShooterInput()">+ Add Shooter</button>
+  </div>
+  <div class="card">
+    <h2>Select Stages</h2>
+    <div class="toggle-all-row">
+      <button class="btn btn-secondary btn-sm" onclick="toggleAllStages(true)">Select All</button>
+      <button class="btn btn-secondary btn-sm" onclick="toggleAllStages(false)">Deselect All</button>
+    </div>
+    <div id="stageToggles"></div>
+    <div class="total-rounds" id="totalRoundsDisplay"></div>
+  </div>
+  <button class="btn btn-primary mt-8" id="startBtn" onclick="startQualification()">Begin Qualification</button>
+</section>
+
+<!-- SCORING -->
+<section id="screen-scoring" class="screen">
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+  <div class="shooter-tab-bar" id="shooterTabs"></div>
+  <div id="scoringContent"></div>
+  <div class="stage-nav" id="stageNav"></div>
+</section>
+
+<!-- RESULTS -->
+<section id="screen-results" class="screen">
+  <h2 class="text-center mb-16" style="color:var(--primary);">Qualification Results</h2>
+  <div id="resultsContent"></div>
+  <button class="btn btn-gold mt-16" style="width:100%" onclick="saveToHallOfFame()">Save to Hall of Fame</button>
+  <button class="btn btn-secondary mt-8" style="width:100%" onclick="showScreen('home')">Back to Home</button>
+</section>
+
+<!-- HALL OF FAME -->
+<section id="screen-hallOfFame" class="screen">
+  <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:16px;">
+    <h2 style="color:var(--primary);">Hall of Fame</h2>
+    <button class="btn btn-danger btn-sm" onclick="clearHallOfFame()" id="clearHofBtn" style="display:none;">Clear All</button>
+  </div>
+  <div id="hofContent"></div>
+</section>
+
+<script>
+// ===== STAGE DATA =====
+const STAGES = [
+  {
+    id: 1, distance: '3 yards', rounds: 6,
+    strings: [
+      { desc: 'Draw, fire 3 rounds strong hand only, switch hands, fire 3 rounds support hand only', rounds: 6, time: '6 seconds' }
+    ]
+  },
+  {
+    id: 2, distance: '5 yards', rounds: 12,
+    strings: [
+      { desc: 'Draw and fire 3 rounds', rounds: 3, time: '3 seconds' },
+      { desc: 'From Ready, fire 3 rounds', rounds: 3, time: '2 seconds' },
+      { desc: 'From Ready, fire 6 rounds', rounds: 6, time: '4 seconds' }
+    ]
+  },
+  {
+    id: 3, distance: '7 yards', rounds: 18,
+    strings: [
+      { desc: 'Draw and fire 5 rounds', rounds: 5, time: '5 seconds' },
+      { desc: 'From Ready, fire 4 rounds, reload, fire 4 rounds', rounds: 8, time: '8 seconds' },
+      { desc: 'From Ready, fire 5 rounds', rounds: 5, time: '4 seconds' }
+    ]
+  },
+  {
+    id: 4, distance: '15 yards', rounds: 6,
+    strings: [
+      { desc: 'Draw and fire 3 rounds', rounds: 3, time: '6 seconds' },
+      { desc: 'From Ready, fire 3 rounds', rounds: 3, time: '5 seconds' }
+    ]
+  },
+  {
+    id: 5, distance: '25 yards', rounds: 8,
+    strings: [
+      { desc: 'Draw, fire 4 rounds standing, transition to kneeling, fire 4 rounds', rounds: 8, time: '20 seconds' }
+    ]
+  }
+];
+
+// ===== STATE =====
+let shooters = [];
+let selectedStages = new Set([1,2,3,4,5]);
+let scores = {}; // { shooterIdx: { stageId: { stringIdx: hits } } }
+let currentStageIdx = 0;
+let currentShooterIdx = 0;
+let activeStages = [];
+
+// ===== NAVIGATION =====
+function showScreen(name) {
+  document.querySelectorAll('.screen').forEach(s => s.classList.remove('active'));
+  document.getElementById('screen-' + name).classList.add('active');
+  document.querySelectorAll('.header-nav button').forEach(b => {
+    b.classList.toggle('active', b.dataset.screen === name);
+  });
+  if (name === 'setup') initSetup();
+  if (name === 'hallOfFame') renderHallOfFame();
+}
+
+// ===== SETUP =====
+function initSetup() {
+  const container = document.getElementById('shooterInputs');
+  if (container.children.length === 0) {
+    addShooterInput();
+  }
+  renderStageToggles();
+  updateTotalRounds();
+}
+
+function addShooterInput() {
+  const container = document.getElementById('shooterInputs');
+  const count = container.children.length;
+  if (count >= 5) return;
+  const row = document.createElement('div');
+  row.className = 'shooter-row';
+  row.innerHTML = `
+    <span class="shooter-num">${count + 1}</span>
+    <input type="text" placeholder="Shooter ${count + 1} name" maxlength="20">
+    <button class="remove-shooter" onclick="removeShooterInput(this)" title="Remove">&times;</button>
+  `;
+  container.appendChild(row);
+  updateShooterNumbers();
+  updateAddButton();
+}
+
+function removeShooterInput(btn) {
+  const container = document.getElementById('shooterInputs');
+  if (container.children.length <= 1) return;
+  btn.closest('.shooter-row').remove();
+  updateShooterNumbers();
+  updateAddButton();
+}
+
+function updateShooterNumbers() {
+  document.querySelectorAll('#shooterInputs .shooter-row').forEach((row, i) => {
+    row.querySelector('.shooter-num').textContent = i + 1;
+    row.querySelector('input').placeholder = `Shooter ${i + 1} name`;
+  });
+}
+
+function updateAddButton() {
+  const count = document.querySelectorAll('#shooterInputs .shooter-row').length;
+  document.getElementById('addShooterBtn').style.display = count >= 5 ? 'none' : '';
+}
+
+function renderStageToggles() {
+  const container = document.getElementById('stageToggles');
+  container.innerHTML = STAGES.map(s => `
+    <label class="stage-toggle ${selectedStages.has(s.id) ? '' : 'disabled'}">
+      <input type="checkbox" ${selectedStages.has(s.id) ? 'checked' : ''}
+             onchange="toggleStage(${s.id}, this.checked)">
+      <div class="stage-toggle-info">
+        <div class="stage-name">Stage ${s.id} — ${s.distance}</div>
+        <div class="stage-detail">${s.strings.map(st => st.desc).join(' | ')}</div>
+      </div>
+      <span class="stage-rounds-badge">${s.rounds} rds</span>
+    </label>
+  `).join('');
+}
+
+function toggleStage(id, checked) {
+  if (checked) selectedStages.add(id);
+  else selectedStages.delete(id);
+  document.querySelector(`[onchange="toggleStage(${id}, this.checked)"]`)
+    .closest('.stage-toggle').classList.toggle('disabled', !checked);
+  updateTotalRounds();
+}
+
+function toggleAllStages(on) {
+  STAGES.forEach(s => {
+    if (on) selectedStages.add(s.id);
+    else selectedStages.delete(s.id);
+  });
+  renderStageToggles();
+  updateTotalRounds();
+}
+
+function updateTotalRounds() {
+  const total = STAGES.filter(s => selectedStages.has(s.id))
+    .reduce((sum, s) => sum + s.rounds, 0);
+  const maxPoints = total * 2;
+  document.getElementById('totalRoundsDisplay').innerHTML =
+    `<strong>${total}</strong> rounds selected &bull; <strong>${maxPoints}</strong> points possible`;
+  document.getElementById('startBtn').disabled = selectedStages.size === 0;
+}
+
+// ===== START QUALIFICATION =====
+function startQualification() {
+  // Gather shooters
+  const inputs = document.querySelectorAll('#shooterInputs input[type="text"]');
+  shooters = [];
+  inputs.forEach((input, i) => {
+    const name = input.value.trim() || `Shooter ${i + 1}`;
+    shooters.push(name);
+  });
+
+  if (selectedStages.size === 0) return;
+
+  // Init scores
+  activeStages = STAGES.filter(s => selectedStages.has(s.id));
+  scores = {};
+  shooters.forEach((_, si) => {
+    scores[si] = {};
+    activeStages.forEach(stage => {
+      scores[si][stage.id] = {};
+      stage.strings.forEach((_, sti) => {
+        scores[si][stage.id][sti] = 0;
+      });
+    });
+  });
+
+  currentStageIdx = 0;
+  currentShooterIdx = 0;
+  showScreen('scoring');
+  renderScoring();
+}
+
+// ===== SCORING =====
+function renderScoring() {
+  const stage = activeStages[currentStageIdx];
+  const progress = ((currentStageIdx) / activeStages.length) * 100;
+  document.getElementById('progressFill').style.width = progress + '%';
+
+  // Shooter tabs
+  const tabs = document.getElementById('shooterTabs');
+  tabs.innerHTML = shooters.map((name, i) => {
+    const total = getShooterTotal(i);
+    return `<button class="shooter-tab ${i === currentShooterIdx ? 'active' : ''}"
+                    onclick="switchShooter(${i})">
+      ${name} <span class="tab-score">${total}pts</span>
+    </button>`;
+  }).join('');
+
+  // Running total for current shooter
+  const currentTotal = getShooterTotal(currentShooterIdx);
+  const maxPossible = getMaxPossiblePoints();
+
+  // Stage content
+  const content = document.getElementById('scoringContent');
+  content.innerHTML = `
+    <div class="scoring-stage-header">
+      <div class="stage-label">Stage ${stage.id} of ${activeStages.length}</div>
+      <div class="distance">${stage.distance}</div>
+      <div class="stage-label">${stage.rounds} rounds &bull; ${stage.rounds * 2} points</div>
+    </div>
+    <div class="running-total">
+      ${shooters[currentShooterIdx]}'s Score: <strong>${currentTotal} / ${maxPossible}</strong>
+    </div>
+    ${stage.strings.map((str, si) => `
+      <div class="string-card">
+        <div class="string-time">${str.time}</div>
+        <div class="string-desc">${str.desc}</div>
+        <div class="hits-input">
+          <button onclick="adjustHits(${stage.id}, ${si}, -1)">−</button>
+          <div>
+            <div class="hits-value" id="hits-${stage.id}-${si}">${scores[currentShooterIdx][stage.id][si]}</div>
+            <div class="hits-max">/ ${str.rounds} hits</div>
+          </div>
+          <button onclick="adjustHits(${stage.id}, ${si}, 1)">+</button>
+        </div>
+      </div>
+    `).join('')}
+  `;
+
+  // Nav buttons
+  const nav = document.getElementById('stageNav');
+  const isFirst = currentStageIdx === 0;
+  const isLast = currentStageIdx === activeStages.length - 1;
+  nav.innerHTML = `
+    <button class="btn btn-secondary" onclick="prevStage()" ${isFirst ? 'disabled' : ''}>Previous</button>
+    ${isLast
+      ? `<button class="btn btn-primary" onclick="finishQualification()">Finish</button>`
+      : `<button class="btn btn-primary" onclick="nextStage()">Next Stage</button>`
+    }
+  `;
+}
+
+function adjustHits(stageId, stringIdx, delta) {
+  const stage = STAGES.find(s => s.id === stageId);
+  const maxHits = stage.strings[stringIdx].rounds;
+  let val = scores[currentShooterIdx][stageId][stringIdx] + delta;
+  val = Math.max(0, Math.min(val, maxHits));
+  scores[currentShooterIdx][stageId][stringIdx] = val;
+  document.getElementById(`hits-${stageId}-${stringIdx}`).textContent = val;
+  // Update running total and tabs
+  const currentTotal = getShooterTotal(currentShooterIdx);
+  const maxPossible = getMaxPossiblePoints();
+  document.querySelector('.running-total strong').textContent = `${currentTotal} / ${maxPossible}`;
+  document.querySelectorAll('.shooter-tab').forEach((tab, i) => {
+    tab.querySelector('.tab-score').textContent = getShooterTotal(i) + 'pts';
+  });
+}
+
+function switchShooter(idx) {
+  currentShooterIdx = idx;
+  renderScoring();
+}
+
+function prevStage() {
+  if (currentStageIdx > 0) { currentStageIdx--; renderScoring(); window.scrollTo(0,0); }
+}
+
+function nextStage() {
+  if (currentStageIdx < activeStages.length - 1) { currentStageIdx++; renderScoring(); window.scrollTo(0,0); }
+}
+
+function getShooterTotal(shooterIdx) {
+  let total = 0;
+  activeStages.forEach(stage => {
+    stage.strings.forEach((_, si) => {
+      total += (scores[shooterIdx][stage.id][si] || 0) * 2;
+    });
+  });
+  return total;
+}
+
+function getMaxPossiblePoints() {
+  return activeStages.reduce((sum, s) => sum + s.rounds, 0) * 2;
+}
+
+// ===== RESULTS =====
+function finishQualification() {
+  const maxPoints = getMaxPossiblePoints();
+  showScreen('results');
+  const content = document.getElementById('resultsContent');
+  content.innerHTML = shooters.map((name, i) => {
+    const score = getShooterTotal(i);
+    const pct = maxPoints > 0 ? Math.round((score / maxPoints) * 100) : 0;
+    const isInstructor = pct >= 90;
+    const isPass = pct >= 80;
+    const cls = isInstructor ? 'instructor' : (isPass ? 'pass' : 'fail');
+    const colorCls = isInstructor ? 'instructor-color' : (isPass ? 'pass-color' : 'fail-color');
+    const badgeCls = isInstructor ? 'badge-instructor' : (isPass ? 'badge-pass' : 'badge-fail');
+    const label = isInstructor ? 'Instructor Pass' : (isPass ? 'Pass' : 'Fail');
+
+    // Stage breakdown
+    let breakdownRows = activeStages.map(stage => {
+      let stageHits = 0;
+      stage.strings.forEach((_, si) => { stageHits += scores[i][stage.id][si]; });
+      return `<tr><td>${stage.distance}</td><td>${stageHits} / ${stage.rounds}</td><td>${stageHits * 2}</td></tr>`;
+    }).join('');
+
+    return `
+      <div class="result-card ${cls}">
+        <div class="result-name">${name}</div>
+        <div class="result-score ${colorCls}">${score}<span style="font-size:1rem;color:var(--text-secondary);">/ ${maxPoints}</span></div>
+        <div class="result-badge ${badgeCls}">${label}</div>
+        <div style="font-size:0.82rem; color:var(--text-secondary); margin-top:4px;">${pct}%</div>
+        <div class="result-breakdown">
+          <table>
+            <tr><th>Distance</th><th>Hits</th><th>Points</th></tr>
+            ${breakdownRows}
+          </table>
+        </div>
+      </div>
+    `;
+  }).join('');
+}
+
+// ===== HALL OF FAME =====
+function getHallOfFame() {
+  try { return JSON.parse(localStorage.getItem('fbi_hof') || '[]'); }
+  catch { return []; }
+}
+
+function saveHallOfFame(data) {
+  localStorage.setItem('fbi_hof', JSON.stringify(data));
+}
+
+function saveToHallOfFame() {
+  const hof = getHallOfFame();
+  const maxPoints = getMaxPossiblePoints();
+  const date = new Date().toLocaleDateString();
+  const stagesUsed = activeStages.map(s => s.distance).join(', ');
+
+  shooters.forEach((name, i) => {
+    const score = getShooterTotal(i);
+    const pct = maxPoints > 0 ? Math.round((score / maxPoints) * 100) : 0;
+    hof.push({
+      name,
+      score,
+      maxPoints,
+      pct,
+      date,
+      stages: stagesUsed,
+      id: Date.now() + '-' + i
+    });
+  });
+
+  saveHallOfFame(hof);
+  showScreen('hallOfFame');
+}
+
+function renderHallOfFame() {
+  const hof = getHallOfFame();
+  const container = document.getElementById('hofContent');
+  const clearBtn = document.getElementById('clearHofBtn');
+
+  if (hof.length === 0) {
+    container.innerHTML = '<div class="hof-empty">No records yet. Complete a qualification to get started!</div>';
+    clearBtn.style.display = 'none';
+    return;
+  }
+
+  clearBtn.style.display = '';
+
+  // Sort by percentage descending
+  const sorted = [...hof].sort((a, b) => b.pct - a.pct);
+
+  container.innerHTML = sorted.map((entry, i) => {
+    const isInstructor = entry.pct >= 90;
+    const isPass = entry.pct >= 80;
+    const colorCls = isInstructor ? 'instructor-color' : (isPass ? 'pass-color' : 'fail-color');
+    const badgeCls = isInstructor ? 'badge-instructor' : (isPass ? 'badge-pass' : 'badge-fail');
+    const label = isInstructor ? 'INST' : (isPass ? 'PASS' : 'FAIL');
+    let rankCls = '';
+    if (i === 0) rankCls = 'gold';
+    else if (i === 1) rankCls = 'silver';
+    else if (i === 2) rankCls = 'bronze';
+
+    return `
+      <div class="hof-entry">
+        <div class="hof-rank ${rankCls}">#${i + 1}</div>
+        <div class="hof-info">
+          <div class="hof-name">${entry.name}</div>
+          <div class="hof-details">${entry.stages || 'All stages'}</div>
+          <div class="hof-date">${entry.date}</div>
+        </div>
+        <div>
+          <span class="hof-score ${colorCls}">${entry.score}/${entry.maxPoints}</span>
+          <span class="result-badge hof-badge-small ${badgeCls}">${label}</span>
+        </div>
+        <button class="hof-delete" onclick="deleteHofEntry('${entry.id}')" title="Delete">&times;</button>
+      </div>
+    `;
+  }).join('');
+}
+
+function deleteHofEntry(id) {
+  let hof = getHallOfFame().filter(e => e.id !== id);
+  saveHallOfFame(hof);
+  renderHallOfFame();
+}
+
+function clearHallOfFame() {
+  if (confirm('Clear all Hall of Fame records?')) {
+    saveHallOfFame([]);
+    renderHallOfFame();
+  }
+}
+
+// ===== INIT =====
+showScreen('home');
+</script>
+</body>
+</html>
